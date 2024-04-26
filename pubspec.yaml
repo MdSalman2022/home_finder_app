@@ -79,6 +79,25 @@ flutter:
     - assets/images/livingroom.webp
     - assets/images/filter.png
     - assets/images/map.png
+    - assets/images/homeshifting.jpg
+    - assets/images/heroImage.jpg
+    - assets/images/categories/wallart.jpg
+    - assets/images/categories/accents.jpg
+    - assets/images/categories/rugs.jpg
+    - assets/images/categories/plants.jpg
+    - assets/images/categories/mirrors.jpg
+    - assets/images/categories/curtains.jpg
+    - assets/images/categories/pillows.jpg
+    - assets/images/categories/shelves.jpg
+    - assets/images/categories/vases.jpg
+    - assets/images/categories/lighting.jpg
+    - assets/images/categories/planters.jpg
+    - assets/images/categories/throws.jpg
+    - assets/images/categories/baskets.jpg
+    - assets/images/categories/candles.jpg
+    - assets/images/categories/wallpaper.jpg
+    - assets/images/categories/handmade.jpg
+    - assets/images/avatar.jpeg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

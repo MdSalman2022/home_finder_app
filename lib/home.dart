@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:home_finder_app/PropertyDetailsPage.dart';
+import 'package:home_finder_app/decor.dart';
+import 'package:home_finder_app/designer.dart';
+import 'package:home_finder_app/shifting.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -402,6 +405,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
@@ -427,7 +431,35 @@ class _HomePageState extends State<HomePage> {
         unselectedLabelStyle: TextStyle(color: Colors.black),
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage()),
+              );
+              break;
+            case 1:
+              // Navigate to Shifting page
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShiftingPage()),
+              );
+              break;
+            case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DecorPage()),
+              );
+              break;
+            case 3:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DesignerPage()),
+              );
+              break;
+          }
+        },
       ),
     );
   }

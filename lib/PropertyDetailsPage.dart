@@ -35,50 +35,6 @@ class PropertyDetailsPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20.0),
-                  bottomRight: Radius.circular(20.0),
-                ),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.4 + 10,
-                  child: Image.asset(property.imageURL, fit: BoxFit.cover),
-                ),
-              ),
-              Positioned(
-                top: 40.0,
-                left: 10.0,
-                child: Material(
-                  // Wrap IconButton with Material
-                  color: Colors.transparent, // Make Material transparent
-                  child: Container(
-                    width: 40.0, // Set the width of the container
-                    height: 40.0, // Set the height of the container
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(50.0),
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      iconSize: 20.0, // Set the size of the icon
-                      onPressed: () {
-                        // Navigate to the home page
-                        print("clicked");
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                HomePage(), // Replace with your home page widget
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
           SafeArea(
             child: ListView(
               children: [
@@ -170,6 +126,48 @@ class PropertyDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20.0),
+                  bottomRight: Radius.circular(20.0),
+                ),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.4 + 10,
+                  child: Image.asset(property.imageURL, fit: BoxFit.cover),
+                ),
+              ),
+              Positioned(
+                top: 40.0,
+                left: 10.0,
+                child: Material(
+                  // Wrap IconButton with Material
+                  color: Colors.transparent, // Make Material transparent
+                  child: Container(
+                    width: 40.0, // Set the width of the container
+                    height: 40.0, // Set the height of the container
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                    child: GestureDetector(
+                      onTap: () {
+                        print('GestureDetector tapped');
+                      },
+                      child: IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        iconSize: 20.0,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
         ],
       ),
