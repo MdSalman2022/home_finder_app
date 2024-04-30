@@ -4,8 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:home_finder_app/designer.dart';
 import 'package:home_finder_app/home.dart';
 import 'package:home_finder_app/shifting.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'constants.dart';
 
 class DecorPage extends StatefulWidget {
   @override
@@ -128,17 +128,19 @@ class _DecorPageState extends State<DecorPage> {
     fetchProducts();
   }
 
-  Future<void> fetchProducts() async {
+  Future<List<dynamic>> fetchProducts() async {
     var dio = Dio();
-    // print('Fetching products');
-    final response = await dio.get('http://10.0.2.2:3000/products/getProducts');
-
-    if (response.statusCode == 200) {
-      setState(() {
-        products = response.data;
-      });
-    } else {
-      throw Exception('Failed to load products');
+    try {
+      final response =
+          await dio.get('${Constants.server}/products/getProducts');
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception(
+            'Failed to load products with status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load products: $e');
     }
   }
 
@@ -287,70 +289,98 @@ class _DecorPageState extends State<DecorPage> {
               "Latest products in store",
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 10, // Add horizontal spacing
-                mainAxisSpacing: 10, // Add vertical spacing
-                children: products.map((product) {
-                  return Card(
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: IconButton(
-                            icon: Icon(Icons.favorite_border), // Love icon
-                            onPressed: () {
-                              // Handle the press event
-                            },
+            FutureBuilder<List<dynamic>>(
+              future: fetchProducts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: SizedBox(
+                      height: 600,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SpinKitFadingCircle(
+                            color: Color(0xFF2563EB),
+                            size: 50.0,
                           ),
-                        ),
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 100,
-                                child: Image.network(
-                                  product['img'] ?? 'assets/images/default.jpg',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top:
-                                        2.0), // Add a gap between the image and the text
-                                child: Text(
-                                  product['name'], // Price
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-
-                                  textAlign:
-                                      TextAlign.center, // Center align the text
-                                ),
-                              ),
-                              Container(
-                                child: Text(
-                                  '৳${product['price']}', // Price
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   );
-                }).toList(),
-              ),
+                } else if (snapshot.hasError) {
+                  return Text('Server Error: ${snapshot.error}');
+                } else {
+                  var products = snapshot.data;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: GridView.count(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10, // Add horizontal spacing
+                      mainAxisSpacing: 10, // Add vertical spacing
+                      children: (products ?? []).map((product) {
+                        return Card(
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: IconButton(
+                                  icon:
+                                      Icon(Icons.favorite_border), // Love icon
+                                  onPressed: () {
+                                    // Handle the press event
+                                  },
+                                ),
+                              ),
+                              Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      height: 100,
+                                      child: Image.network(
+                                        product['img'] ??
+                                            'assets/images/default.jpg',
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top:
+                                              2.0), // Add a gap between the image and the text
+                                      child: Text(
+                                        product['name'], // Price
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+
+                                        textAlign: TextAlign
+                                            .center, // Center align the text
+                                      ),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        '৳${product['price']}', // Price
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }
+              },
             )
           ],
         ),

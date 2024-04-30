@@ -5,6 +5,9 @@ import 'package:home_finder_app/designer.dart';
 import 'package:home_finder_app/shifting.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'constants.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -43,70 +46,25 @@ class _HomePageState extends State<HomePage> {
   //   });
   // }
 
-  List<Map<String, dynamic>> properties = [
-    {
-      'imageURL': 'assets/images/bedroom.webp',
-      'Name':
-          'A Very Well-fitted Apartment Is Here Sited At Bashundhara R-A Featuring 2080 Sq Ft Space',
-      'bedroom': 3,
-      'bathroom': 2,
-      'livingArea': 1000,
-      'Description':
-          "A Budget-Friendly beautiful apartment is available to sale. Located in Bashundhara R-A, this modern apartment is 2080  Square Feet. This ready apartment has cozy 4 beds and modern and well fitted ...Read more",
-      'address': 'Bashundhora R-A',
-      'rating': '4.2 rating (1752 reviews)',
-      'rentFee': '10000'
-    },
-    {
-      'imageURL': 'assets/images/masterbed.webp',
-      'Name':
-          'A Newly Constructed 3 Bedroom Flat Is Available For Sale In Bashundhara R-A',
-      'bedroom': 4,
-      'bathroom': 3,
-      'livingArea': 2000,
-      'Description':
-          "A Budget-Friendly beautiful apartment is available to sale. Located in Bashundhara R-A, this modern apartment is 2080  Square Feet. This ready apartment has cozy 4 beds and modern and well fitted ...Read more",
-      'address': 'Bashundhora R-A',
-      'rating': '4.8 rating (1156 reviews)',
-      'rentFee': '15000'
-    },
-    {
-      'imageURL': 'assets/images/drawingroom.webp',
-      'Name': 'A 3 Bedroom Flat Is Available For Sale In Bashundhara R-A',
-      'bedroom': 5,
-      'bathroom': 5,
-      'livingArea': 2500,
-      'Description':
-          "A Budget-Friendly beautiful apartment is available to sale. Located in Bashundhara R-A, this modern apartment is 2080  Square Feet. This ready apartment has cozy 4 beds and modern and well fitted ...Read more",
-      'address': 'Bashundhora R-A',
-      'rating': '4.9 rating (100 reviews)',
-      'rentFee': '20000'
-    },
-    {
-      'imageURL': 'assets/images/diningroom.webp',
-      'Name': 'A 3 Bedroom Flat Is Available For Sale In Bashundhara R-A',
-      'bedroom': 2,
-      'bathroom': 1,
-      'livingArea': 2000,
-      'Description':
-          "A Budget-Friendly beautiful apartment is available to sale. Located in Bashundhara R-A, this modern apartment is 2080  Square Feet. This ready apartment has cozy 4 beds and modern and well fitted ...Read more",
-      'address': 'Bashundhora R-A',
-      'rating': '4.5 rating (100 reviews)',
-      'rentFee': '22000'
-    },
-    {
-      'imageURL': 'assets/images/livingroom.webp',
-      'Name': 'Awesome 3 Bedroom Flat Is Available For Sale In Bashundhara R-A',
-      'bedroom': 4,
-      'bathroom': 3,
-      'livingArea': 2000,
-      'Description':
-          "A Budget-Friendly beautiful apartment is available to sale. Located in Bashundhara R-A, this modern apartment is 2080  Square Feet. This ready apartment has cozy 4 beds and modern and well fitted ...Read more",
-      'address': 'Bashundhora R-A',
-      'rating': '4.3 rating (50 reviews)',
-      'rentFee': '12000'
-    },
-  ];
+  List<dynamic> properties = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProperties();
+  }
+
+  Future<List<dynamic>> fetchProperties() async {
+    var dio = Dio();
+    final response = await dio.get(
+        '${Constants.server}/properties/getAll?page=1&limit=10&sortOrder=asc');
+
+    if (response.statusCode == 200) {
+      return response.data;
+    } else {
+      throw Exception('Failed to load products');
+    }
+  }
 
   List<bool> isSelected = [true, false, false]; // Initial selection
   bool isFavorited = false;
@@ -276,131 +234,184 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: properties.length,
-              itemBuilder: (context, index) {
-                var propertyMap = properties[index];
-                var property = Property(
-                    Name: propertyMap['Name'],
-                    imageURL: propertyMap['imageURL'],
-                    bedroom: propertyMap['bedroom'],
-                    bathroom: propertyMap['bathroom'],
-                    livingArea: propertyMap['livingArea'],
-                    Description: propertyMap['Description'],
-                    address: propertyMap['address'],
-                    rating: propertyMap['rating'],
-                    rentFee: propertyMap['rentFee']);
-                return Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Stack(
+          FutureBuilder<List<dynamic>>(
+            future:
+                fetchProperties(), // Assuming you have a function that fetches the properties
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: SizedBox(
+                    height: 600,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SpinKitFadingCircle(
+                          color: Color(0xFF2563EB),
+                          size: 50.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                var properties = snapshot.data;
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: properties?.length,
+                    itemBuilder: (context, index) {
+                      var propertyMap =
+                          properties != null && properties.length > index
+                              ? properties[index]
+                              : {};
+                      Map<String, dynamic> propertyInfo =
+                          jsonDecode(propertyMap['PropertyInfo']);
+                      int bed = propertyInfo['Bed'];
+                      int bath = propertyInfo['Bathroom'];
+                      int area = propertyInfo['Area'];
+                      print('propertyMap: $propertyMap');
+                      String imagesString = propertyMap['Images'] ?? '';
+                      List<dynamic> imagesList = imagesString.isNotEmpty
+                          ? jsonDecode(imagesString)
+                          : [];
+                      print("imagesList: $imagesList");
+                      var property = Property(
+                          Name: propertyMap['Name'] ?? '',
+                          imageURL: imagesList.isNotEmpty
+                              ? imagesList[0]
+                              : 'https://i.ibb.co/VWzpdMG/home-design-1.jpg',
+                          bedroom: bed,
+                          bathroom: bath,
+                          livingArea: area,
+                          Description: propertyMap['Description'] ?? '',
+                          address: propertyMap['Location'] ?? '',
+                          rating: propertyMap['Reviews'] ?? '',
+                          rentFee: (propertyMap['RentFee'] ??
+                                  '4.3 rating (50 reviews)')
+                              .toString());
+                      return Column(
                         children: <Widget>[
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        PropertyDetailsPage(property)),
-                              );
-                            },
-                            child: Card(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                side: BorderSide(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  width: 1,
-                                ),
-                              ),
-                              elevation: 0.0, // This line removes the shadow
-                              child: Column(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Image.asset(propertyMap['imageURL']),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Text(
-                                      propertyMap['Name'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Stack(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PropertyDetailsPage(property)),
+                                    );
+                                  },
+                                  child: Card(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      side: BorderSide(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    elevation:
+                                        0.0, // This line removes the shadow
+                                    child: Column(
+                                      children: <Widget>[
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                          child: Container(
+                                            height: 300,
+                                            width: double.infinity,
+                                            child: Image.network(
+                                              imagesList.isNotEmpty
+                                                  ? imagesList[0]
+                                                  : 'https://i.ibb.co/VWzpdMG/home-design-1.jpg',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child: Text(
+                                            propertyMap['Name'] ?? '',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text('Bedroom'),
+                                                Text(bed.toString()),
+                                              ],
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text('Bathroom'),
+                                                Text(bath.toString()),
+                                              ],
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text('Living Area'),
+                                                Text(area.toString()),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 10.0),
+                                      ],
                                     ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text('Bedroom'),
-                                          Text(propertyMap['bedroom']
-                                              .toString()),
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text('Bathroom'),
-                                          Text(propertyMap['bathroom']
-                                              .toString()),
-                                        ],
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text('Living Area'),
-                                          Text(propertyMap['livingArea']
-                                              .toString()),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10.0),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20.0),
-                          Positioned(
-                            top: 20.0,
-                            right: 20.0,
-                            child: StatefulBuilder(
-                              builder:
-                                  (BuildContext context, StateSetter setState) {
-                                return CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  child: IconButton(
-                                    icon: Icon(
-                                        isFavorited
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: Colors.red),
-                                    onPressed: () {
-                                      setState(() {
-                                        isFavorited = !isFavorited;
-                                      });
+                                ),
+                                const SizedBox(height: 20.0),
+                                Positioned(
+                                  top: 20.0,
+                                  right: 20.0,
+                                  child: StatefulBuilder(
+                                    builder: (BuildContext context,
+                                        StateSetter setState) {
+                                      return CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        child: IconButton(
+                                          icon: Icon(
+                                              isFavorited
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: Colors.red),
+                                          onPressed: () {
+                                            setState(() {
+                                              isFavorited = !isFavorited;
+                                            });
+                                          },
+                                        ),
+                                      );
                                     },
                                   ),
-                                );
-                              },
+                                ),
+                              ],
                             ),
                           ),
+                          SizedBox(height: 10.0),
                         ],
-                      ),
-                    ),
-                    SizedBox(height: 10.0),
-                  ],
+                      );
+                    },
+                  ),
                 );
-              },
-            ),
+              }
+            },
           ),
         ],
       ),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:home_finder_app/decor.dart';
+import 'package:home_finder_app/designer.dart';
 import 'package:home_finder_app/home.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:dio/dio.dart';
+import 'constants.dart';
 
 class BulletPoint extends StatelessWidget {
   final String text;
@@ -34,6 +38,65 @@ class ShiftingPage extends StatefulWidget {
 
 class _ShiftingPageState extends State<ShiftingPage> {
   final _formKey = GlobalKey<FormState>();
+  String? name, phone, email, dayOfShifting, fromLocation, toLocation;
+  void submitForm() async {
+    print("Submitting");
+    final form = _formKey.currentState;
+    if (form != null && form.validate()) {
+      form.save();
+      try {
+        final response = await Dio().post(
+          '${Constants.server}/shiftings/create',
+          data: {
+            'name': name,
+            'phone': phone,
+            'email': email,
+            'dayOfShifting': dayOfShifting,
+            'from_location': fromLocation,
+            'to_location': toLocation,
+            'submittedBy': '1',
+          },
+        );
+
+        print("myresponse: ${response}");
+
+        if (response.statusCode == 200) {
+          print("Form submitted successfully");
+          Fluttertoast.showToast(
+            msg: "Form submitted successfully",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        } else {
+          print("Form failed to submit");
+          Fluttertoast.showToast(
+            msg: "Failed to submit form",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      } catch (e) {
+        print("Failed to submit form: $e");
+        Fluttertoast.showToast(
+          msg: "Failed to submit form",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    }
+  }
 
   int _selectedIndex = 1;
 
@@ -131,43 +194,50 @@ class _ShiftingPageState extends State<ShiftingPage> {
                       decoration: const InputDecoration(
                         labelText: 'Your Name',
                       ),
+                      onSaved: (value) => name = value,
+
                       // Add validation logic here
                     ),
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'Your Phone',
                       ),
+                      onSaved: (value) => phone = value,
+
                       // Add validation logic here
                     ),
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'Your Email',
                       ),
+                      onSaved: (value) => email = value,
+
                       // Add validation logic here
                     ),
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'Day of shifting',
                       ),
+                      onSaved: (value) => dayOfShifting = value,
                       // Add validation logic here
                     ),
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'From location',
                       ),
+                      onSaved: (value) => fromLocation = value,
                       // Add validation logic here
                     ),
                     TextFormField(
                       decoration: const InputDecoration(
                         labelText: 'To location',
                       ),
+                      onSaved: (value) => toLocation = value,
                       // Add validation logic here
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
-                        // Add submit logic here
-                      },
+                      onPressed: submitForm,
                       child: const Text(
                         'Submit',
                         style: TextStyle(
@@ -251,7 +321,10 @@ class _ShiftingPageState extends State<ShiftingPage> {
               );
               break;
             case 3:
-              // Navigate to Interior page
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DesignerPage()),
+              );
               break;
           }
         },

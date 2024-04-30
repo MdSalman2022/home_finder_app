@@ -136,7 +136,7 @@ class PropertyDetailsPage extends StatelessWidget {
                 ),
                 child: Container(
                   height: MediaQuery.of(context).size.height * 0.4 + 10,
-                  child: Image.asset(property.imageURL, fit: BoxFit.cover),
+                  child: Image.network(property.imageURL, fit: BoxFit.cover),
                 ),
               ),
               Positioned(
