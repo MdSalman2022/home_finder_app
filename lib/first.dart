@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:home_finder_app/home.dart';
+import 'package:home_finder_app/register.dart';
 import 'package:home_finder_app/start.dart';
 
 class GetStarted extends StatefulWidget {
@@ -24,7 +25,7 @@ class _QuizState extends State<GetStarted> {
     Widget screenWidget = StartScreen(switchScreen);
 
     if (activeScreen == 'questions-screen') {
-      screenWidget = HomePage();
+      screenWidget = RegisterPage();
     }
 
     return MaterialApp(

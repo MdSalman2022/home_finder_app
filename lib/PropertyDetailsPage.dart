@@ -52,7 +52,7 @@ class PropertyDetailsPage extends StatelessWidget {
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18.0),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
@@ -61,11 +61,14 @@ class PropertyDetailsPage extends StatelessWidget {
                           Text(property.address),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Icon(Icons.star),
-                          Text('${property.rating}'),
-                        ],
+                      // Row(
+                      //   children: [
+                      //     Icon(Icons.star),
+                      //     Text('${property.rating}'),
+                      //   ],
+                      // ),
+                      const SizedBox(
+                        height: 10,
                       ),
                       Text(
                         'Description',

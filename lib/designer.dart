@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_finder_app/decor.dart';
 import 'package:home_finder_app/home.dart';
+import 'package:home_finder_app/login.dart';
 import 'package:home_finder_app/shifting.dart';
 
 class DesignerPage extends StatefulWidget {
@@ -152,22 +154,43 @@ class _DesignerPageState extends State<DesignerPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+        items: <BottomNavigationBarItem>[
+          const BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Listings',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.compare_arrows),
             label: 'Shifting',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.format_paint),
             label: 'Decor',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
+            icon: const Icon(Icons.people),
             label: 'Interior',
+          ),
+          BottomNavigationBarItem(
+            label: 'Profile',
+            icon: StreamBuilder<User?>(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  User? user = snapshot.data;
+                  if (user != null && user.photoURL != null) {
+                    return CircleAvatar(
+                      backgroundImage: NetworkImage(user.photoURL!),
+                    );
+                  } else {
+                    return Icon(Icons.account_circle);
+                  }
+                } else {
+                  // Show a loading spinner while waiting for the auth state to change
+                  return CircularProgressIndicator();
+                }
+              },
+            ),
           ),
         ],
         currentIndex: _selectedIndex,
@@ -202,6 +225,12 @@ class _DesignerPageState extends State<DesignerPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => DesignerPage()),
+              );
+              break;
+            case 4:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
               );
               break;
           }
