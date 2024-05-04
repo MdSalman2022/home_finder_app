@@ -47,10 +47,6 @@ class _RegisterPageState extends State<RegisterPage> {
         }
       }
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
       return userCredential;
     }
     return null;
@@ -181,8 +177,19 @@ class _RegisterPageState extends State<RegisterPage> {
               icon: Image.asset('assets/images/google.png',
                   height: 20.0), // Replace with your Google logo asset
               label: Text('Continue with Google'),
-              onPressed: () {
-                _signInWithGoogle();
+              onPressed: () async {
+                try {
+                  UserCredential? user = await _signInWithGoogle();
+                  print("user ${user}");
+                  if (user != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
+                  }
+                } catch (e) {
+                  print("Error signing in with Google: $e");
+                }
               },
             ),
             ElevatedButton(
