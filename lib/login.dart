@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:home_finder_app/UserProvider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/gestures.dart';
+import 'package:intl/intl.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -131,11 +132,12 @@ class _LoginPageState extends State<LoginPage> {
 
             // User is signed in, show logout button
             return ListView(
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.only(left: 16, right: 16),
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Text('Hi ${snapshot.data!.displayName}',
+                  child: Text(
+                      'Hi ${toBeginningOfSentenceCase(snapshot.data!.displayName)}',
                       style: TextStyle(fontSize: 24, color: Colors.blueAccent)),
                 ),
                 const Divider(),
