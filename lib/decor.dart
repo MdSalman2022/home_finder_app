@@ -415,6 +415,8 @@ class _DecorPageState extends State<DecorPage> {
                   User? user = snapshot.data;
                   if (user != null && user.photoURL != null) {
                     return CircleAvatar(
+                      radius:
+                          15, // Adjust this value to change the size of the CircleAvatar
                       backgroundImage: NetworkImage(user.photoURL!),
                     );
                   } else {
@@ -426,7 +428,7 @@ class _DecorPageState extends State<DecorPage> {
                 }
               },
             ),
-          ),
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,

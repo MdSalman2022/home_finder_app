@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
+import 'package:home_finder_app/UserProvider.dart';
 import 'package:home_finder_app/constants.dart';
 import 'package:home_finder_app/home.dart';
 import 'package:home_finder_app/login.dart';
@@ -21,6 +23,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<UserCredential?> _signInWithGoogle() async {
     await _googleSignIn.signOut(); // Add this line
+    await _auth.signOut();
+    Provider.of<UserProvider>(context, listen: false).user = null;
 
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
@@ -46,6 +50,24 @@ class _RegisterPageState extends State<RegisterPage> {
           await _saveUserToDatabase(userCredential.user!);
         }
       }
+
+      if (userCredential.user != null) {
+        Fluttertoast.showToast(
+            msg: "Continued with ${userCredential.user!.email}",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.grey,
+            textColor: Colors.white,
+            fontSize: 12.0);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      }
+
+      print('my userCredential ${userCredential}');
 
       return userCredential;
     }
@@ -79,16 +101,20 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> _saveUserToDatabase(User user) async {
-    var dio = Dio();
-    await dio.post(
-      '${Constants.server}/users/create', // Replace with your database URL
-      data: {
-        'name': user.displayName ?? _name,
-        'email': user.email,
-        'photoURL': user.photoURL ?? 'No Photo',
-        'uid': user.uid,
-      },
-    );
+    try {
+      var dio = Dio();
+      await dio.post(
+        '${Constants.server}/users/create', // Replace with your database URL
+        data: {
+          'name': user.displayName ?? _name,
+          'email': user.email,
+          'photoURL': user.photoURL ?? 'No Photo',
+          'uid': user.uid,
+        },
+      );
+    } catch (e) {
+      print('Failed to make POST request: $e');
+    }
   }
 
   @override
@@ -167,7 +193,10 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
-              child: Text('Sign Up'),
+              child: Text('Sign Up', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+              ),
               onPressed: () {
                 _signUpWithEmailPassword();
               },
@@ -180,13 +209,9 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: () async {
                 try {
                   UserCredential? user = await _signInWithGoogle();
-                  print("user ${user}");
-                  if (user != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
-                  }
+                  print("continue with google");
+
+                  print("my userinfo ${user}");
                 } catch (e) {
                   print("Error signing in with Google: $e");
                 }

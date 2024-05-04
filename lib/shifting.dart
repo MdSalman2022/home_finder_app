@@ -304,6 +304,8 @@ class _ShiftingPageState extends State<ShiftingPage> {
                   User? user = snapshot.data;
                   if (user != null && user.photoURL != null) {
                     return CircleAvatar(
+                      radius:
+                          15, // Adjust this value to change the size of the CircleAvatar
                       backgroundImage: NetworkImage(user.photoURL!),
                     );
                   } else {
@@ -315,7 +317,7 @@ class _ShiftingPageState extends State<ShiftingPage> {
                 }
               },
             ),
-          ),
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,

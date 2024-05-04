@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:home_finder_app/constants.dart';
@@ -71,21 +72,35 @@ class _LoginPageState extends State<LoginPage> {
 
       print('userCredential.user ${userCredential.user}');
 
+      try {
+        var dio = Dio();
+        await dio.post(
+          '${Constants.server}/users/create', // Replace with your database URL
+          data: {
+            'name': userCredential.user!.displayName ?? 'No Name',
+            'email': userCredential.user!.email,
+            'photoURL': userCredential.user!.photoURL ?? 'No Photo',
+            'uid': userCredential.user!.uid,
+          },
+        );
+      } catch (e) {
+        print('Failed to make POST request: $e');
+      }
+
       if (userCredential.user != null) {
-        if (userCredential.user!.metadata.creationTime !=
-            userCredential.user!.metadata.lastSignInTime) {
-          print("making call");
-          var dio = Dio();
-          await dio.post(
-            '${Constants.server}/users/create', // Replace with your database URL
-            data: {
-              'name': userCredential.user!.displayName ?? 'No Name',
-              'email': userCredential.user!.email,
-              'photoURL': userCredential.user!.photoURL ?? 'No Photo',
-              'uid': userCredential.user!.uid,
-            },
-          );
-        }
+        Fluttertoast.showToast(
+            msg: "Continued with ${userCredential.user!.email}",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.grey,
+            textColor: Colors.white,
+            fontSize: 12.0);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       }
 
       return userCredential;
@@ -341,14 +356,7 @@ class _LoginPageState extends State<LoginPage> {
                               try {
                                 UserCredential? user =
                                     await _signInWithGoogle();
-                                print("user ${user}");
-                                if (user != null) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => HomePage()),
-                                  );
-                                }
+                                print("userinfo ${user}");
                               } catch (e) {
                                 print("Error signing in with Google: $e");
                               }
@@ -392,6 +400,8 @@ class _LoginPageState extends State<LoginPage> {
                   User? user = snapshot.data;
                   if (user != null && user.photoURL != null) {
                     return CircleAvatar(
+                      radius:
+                          15, // Adjust this value to change the size of the CircleAvatar
                       backgroundImage: NetworkImage(user.photoURL!),
                     );
                   } else {
@@ -403,7 +413,7 @@ class _LoginPageState extends State<LoginPage> {
                 }
               },
             ),
-          ),
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,

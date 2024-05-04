@@ -180,6 +180,8 @@ class _DesignerPageState extends State<DesignerPage> {
                   User? user = snapshot.data;
                   if (user != null && user.photoURL != null) {
                     return CircleAvatar(
+                      radius:
+                          15, // Adjust this value to change the size of the CircleAvatar
                       backgroundImage: NetworkImage(user.photoURL!),
                     );
                   } else {
@@ -191,7 +193,7 @@ class _DesignerPageState extends State<DesignerPage> {
                 }
               },
             ),
-          ),
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,

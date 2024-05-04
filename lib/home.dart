@@ -415,6 +415,8 @@ class _HomePageState extends State<HomePage> {
                   User? user = snapshot.data;
                   if (user != null && user.photoURL != null) {
                     return CircleAvatar(
+                      radius:
+                          15, // Adjust this value to change the size of the CircleAvatar
                       backgroundImage: NetworkImage(user.photoURL!),
                     );
                   } else {
@@ -426,7 +428,7 @@ class _HomePageState extends State<HomePage> {
                 }
               },
             ),
-          ),
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
