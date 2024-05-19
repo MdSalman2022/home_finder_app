@@ -249,44 +249,6 @@ class _DecorPageState extends State<DecorPage> {
                     );
                   }).toList(),
                 )),
-            // Padding(
-            //   padding: const EdgeInsets.all(10.0),
-            //   child: Column(
-            //     children: [
-            //       Row(
-            //         children: [
-            //           Expanded(
-            //             child: TextField(
-            //               decoration: InputDecoration(
-            //                 hintText: 'Search...',
-            //               ),
-            //               // Add your search logic here
-            //             ),
-            //           ),
-            //           SizedBox(
-            //               width:
-            //                   10), // Add a gap between the TextField and the Button
-            //           ElevatedButton(
-            //             child: Text('Search'),
-            //             onPressed: () {
-            //               // Add your search button logic here
-            //             },
-            //           ),
-            //         ],
-            //       ),
-            //       SizedBox(
-            //           height:
-            //               10), // Add a gap between the search bar and the GridView
-            //       GridView.count(
-            //         shrinkWrap: true,
-            //         physics: NeverScrollableScrollPhysics(),
-            //         crossAxisCount: 2,
-            //         crossAxisSpacing: 10, // Add horizontal spacing
-            //         // ... rest of your code ...
-            //       ),
-            //     ],
-            //   ),
-            // ),
             Text(
               "Latest products in store",
               style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),

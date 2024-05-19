@@ -147,7 +147,6 @@ class _ShiftingPageState extends State<ShiftingPage> {
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 10),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.0),
                             child: Column(
@@ -195,49 +194,51 @@ class _ShiftingPageState extends State<ShiftingPage> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Your Name',
+                        border: OutlineInputBorder(),
                       ),
                       onSaved: (value) => name = value,
-
-                      // Add validation logic here
                     ),
+                    SizedBox(height: 20),
                     TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Your Phone',
+                        border: OutlineInputBorder(),
                       ),
                       onSaved: (value) => phone = value,
-
-                      // Add validation logic here
                     ),
+                    SizedBox(height: 20),
                     TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Your Email',
+                        border: OutlineInputBorder(),
                       ),
                       onSaved: (value) => email = value,
-
-                      // Add validation logic here
                     ),
+                    SizedBox(height: 20),
                     TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Day of shifting',
+                        border: OutlineInputBorder(),
                       ),
                       onSaved: (value) => dayOfShifting = value,
-                      // Add validation logic here
                     ),
+                    SizedBox(height: 20),
                     TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'From location',
+                        border: OutlineInputBorder(),
                       ),
                       onSaved: (value) => fromLocation = value,
-                      // Add validation logic here
                     ),
+                    SizedBox(height: 20),
                     TextFormField(
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'To location',
+                        border: OutlineInputBorder(),
                       ),
                       onSaved: (value) => toLocation = value,
-                      // Add validation logic here
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
@@ -246,15 +247,14 @@ class _ShiftingPageState extends State<ShiftingPage> {
                         'Submit',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 16, // Adjust as needed
+                          fontSize: 16,
                         ),
                       ),
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Color(0xFF3C91E6)),
                         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12), // Adjust as needed
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -265,8 +265,8 @@ class _ShiftingPageState extends State<ShiftingPage> {
                         side: MaterialStateProperty.all<BorderSide>(
                           BorderSide(color: Colors.white.withOpacity(0.4)),
                         ),
-                        overlayColor: MaterialStateProperty.all<Color>(
-                            Color(0xFF3C91E6)), // Random color
+                        overlayColor:
+                            MaterialStateProperty.all<Color>(Color(0xFF3C91E6)),
                       ),
                     ),
                   ],

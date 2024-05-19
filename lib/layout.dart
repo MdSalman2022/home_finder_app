@@ -70,15 +70,15 @@ class Layout extends State<MyLayout> {
               ),
               GButton(
                 icon: Icons.compare_arrows,
-                text: 'Likes',
-              ),
-              GButton(
-                icon: Icons.format_paint,
-                text: 'Search',
+                text: 'Shifting',
               ),
               GButton(
                 icon: Icons.people,
-                text: 'Search',
+                text: 'Designers',
+              ),
+              GButton(
+                icon: Icons.ac_unit_outlined,
+                text: 'Decor',
               ),
               GButton(
                 icon: Icons.account_circle,
