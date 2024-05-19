@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:home_finder_app/UserProvider.dart';
 import 'package:home_finder_app/constants.dart';
-import 'package:home_finder_app/home.dart';
+import 'package:home_finder_app/layout.dart';
 import 'package:home_finder_app/login.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
@@ -63,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => MyLayout()),
         );
       }
 
@@ -85,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
         await _saveUserToDatabase(userCredential.user!);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => MyLayout()),
         );
 
         return userCredential;
@@ -222,7 +222,7 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
+                  MaterialPageRoute(builder: (context) => const MyLayout()),
                 );
               },
             ),

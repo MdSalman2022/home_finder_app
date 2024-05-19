@@ -8,6 +8,7 @@ import 'package:home_finder_app/constants.dart';
 import 'package:home_finder_app/decor.dart';
 import 'package:home_finder_app/designer.dart';
 import 'package:home_finder_app/home.dart';
+import 'package:home_finder_app/layout.dart';
 import 'package:home_finder_app/register.dart';
 import 'package:home_finder_app/shifting.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ import 'package:home_finder_app/UserProvider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
+import 'package:home_finder_app/ProfileMenus.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -99,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => MyLayout()),
         );
       }
 
@@ -146,93 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                 snapshot.data; // Add this line
 
             // User is signed in, show logout button
-            return ListView(
-              padding: EdgeInsets.only(left: 16, right: 16),
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                      'Hi ${toBeginningOfSentenceCase(snapshot.data!.displayName)}',
-                      style: TextStyle(fontSize: 24, color: Colors.blueAccent)),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text('Personal Info'),
-                  ),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.home),
-                    title: Text('Rent management'),
-                  ),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.location_city),
-                    title: Text('My Properties'),
-                  ),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.favorite),
-                    title: Text('Favorites'),
-                  ),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text('Settings'),
-                  ),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.lock),
-                    title: Text('Privacy'),
-                  ),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.payment),
-                    title: Text('Payments & payouts'),
-                  ),
-                ),
-                const Divider(),
-                InkWell(
-                  onTap: () {},
-                  child: const ListTile(
-                    leading: Icon(Icons.security),
-                    title: Text('Login & Security'),
-                  ),
-                ),
-                const Divider(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent, // background color
-                  ),
-                  onPressed: () async {
-                    await _auth.signOut();
-                    Provider.of<UserProvider>(context, listen: false).user =
-                        null;
-                  },
-                  child: Text('Logout', style: TextStyle(color: Colors.white)),
-                ),
-              ],
-            );
+            return ProfileMenu(user: snapshot.data);
           } else {
             Provider.of<UserProvider>(context, listen: false).user = null;
 
@@ -321,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => HomePage()),
+                                      builder: (context) => MyLayout()),
                                 );
                               }
                             },
@@ -369,92 +285,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             );
-          }
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Listings',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.compare_arrows),
-            label: 'Shifting',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.format_paint),
-            label: 'Decor',
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.people),
-            label: 'Interior',
-          ),
-          BottomNavigationBarItem(
-            label: 'Profile',
-            icon: StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  User? user = snapshot.data;
-                  if (user != null && user.photoURL != null) {
-                    return CircleAvatar(
-                      radius:
-                          15, // Adjust this value to change the size of the CircleAvatar
-                      backgroundImage: NetworkImage(user.photoURL!),
-                    );
-                  } else {
-                    return Icon(Icons.account_circle);
-                  }
-                } else {
-                  // Show a loading spinner while waiting for the auth state to change
-                  return CircularProgressIndicator();
-                }
-              },
-            ),
-          )
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.black,
-        selectedLabelStyle: TextStyle(color: Colors.blue),
-        unselectedLabelStyle: TextStyle(color: Colors.black),
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-              );
-              break;
-            case 1:
-              // Navigate to Shifting page
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ShiftingPage()),
-              );
-              break;
-            case 2:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DecorPage()),
-              );
-              break;
-            case 3:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DesignerPage()),
-              );
-              break;
-            case 4:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-              break;
           }
         },
       ),
