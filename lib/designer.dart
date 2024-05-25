@@ -11,14 +11,6 @@ class DesignerPage extends StatefulWidget {
 }
 
 class _DesignerPageState extends State<DesignerPage> {
-  int _selectedIndex = 3;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   final List<Map<String, String>> designers = [
     {
       'name': "Aminul Islam",
@@ -114,7 +106,7 @@ class _DesignerPageState extends State<DesignerPage> {
                         child: Row(
                           children: [
                             Image.asset(
-                              designer['img'] ?? 'default_image_path',
+                              designer['img'] ?? 'assets/images/avatar.jpeg',
                               height: 100,
                               width: 100,
                               fit: BoxFit.cover,
@@ -125,14 +117,14 @@ class _DesignerPageState extends State<DesignerPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    designer['name'] ?? 'default_name',
+                                    designer['name'] ?? 'Akbar Hossain',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
-                                    designer['phone'] ?? 'default_phone',
+                                    designer['phone'] ?? '019421421412',
                                     style: TextStyle(
                                       fontSize: 14,
                                     ),
